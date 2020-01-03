@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+
+import { setNotification } from './reducers/notificationReducer';
 
 import { useField } from './hooks';
 
@@ -11,15 +14,11 @@ import BlogForm from './components/BlogForm';
 import Blog from './components/Blog';
 import Toggleable from './components/Toggleable';
 
-function App() {
+function App({ setNotification }) {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState({ message: null });
-  const title = useField('text');
-  const author = useField('text');
-  const url = useField('text');
-  const username = useField('text');
-  const password = useField('password');
+  const [username, resetUsername] = useField('text');
+  const [password, resetPassword] = useField('password');
 
   const blogFormRef = React.createRef();
 
@@ -38,34 +37,23 @@ function App() {
       const user = JSON.parse(loggedUserJson);
       setUser(user);
       blogService.setToken(user.token);
+      setNotification({ message: `${user.name} logged in`, type: 'success' });
     }
   }, []);
 
-  const handleCreateBlog = async event => {
-    event.preventDefault();
+  const handleCreateBlog = async blog => {
     blogFormRef.current.toggleVisibility();
 
     try {
-      await blogService.createBlog({
-        title: title.value,
-        author: author.value,
-        url: url.value
-      });
+      const newBlog = await blogService.createBlog(blog);
+      setBlogs([...blogs, newBlog]);
 
-      fetchBlogs();
       setNotification({
-        message: `a new blog ${title.value} by ${author.value} added`
+        message: `a new blog ${blog.title} by ${blog.author} added`,
+        type: 'success'
       });
-
-      title.reset('');
-      author.reset('');
-      url.reset('');
     } catch (exception) {
       setNotification({ message: 'Error creating new Blog', type: 'error' });
-    } finally {
-      setTimeout(() => {
-        setNotification({ message: null });
-      }, 3000);
     }
   };
 
@@ -74,13 +62,12 @@ function App() {
       console.log(blogToUpdate);
       const updatedBlog = await blogService.updateBlog(blogToUpdate);
 
-      setNotification({ message: `${updatedBlog.title} updated` });
+      setNotification({
+        message: `${updatedBlog.title} updated`,
+        type: 'success'
+      });
     } catch (exception) {
       setNotification({ message: 'Error updating', type: 'error' });
-    } finally {
-      setTimeout(() => {
-        setNotification({ message: null });
-      }, 3000);
     }
   };
 
@@ -89,18 +76,15 @@ function App() {
       await blogService.deleteBlog(blog);
       fetchBlogs();
 
-      setNotification({ message: `${blog.title} deleted` });
+      setNotification({ message: `${blog.title} deleted`, type: 'success' });
     } catch (exception) {
       setNotification({ message: 'Error updating', type: 'error' });
-    } finally {
-      setTimeout(() => {
-        setNotification({ message: null });
-      }, 3000);
     }
   };
 
   const handleLogin = async event => {
     event.preventDefault();
+
     try {
       const user = await loginService.login({
         username: username.value,
@@ -111,14 +95,15 @@ function App() {
       blogService.setToken(user.token);
       setUser(user);
 
-      username.reset('');
-      password.reset('');
+      resetUsername('');
+      resetPassword('');
+
+      setNotification({
+        message: `${user.name} logged in`,
+        type: 'success'
+      });
     } catch (exception) {
       setNotification({ message: 'Wrong credentials', type: 'error' });
-    } finally {
-      setTimeout(() => {
-        setNotification({ message: null });
-      }, 3000);
     }
   };
 
@@ -128,9 +113,6 @@ function App() {
   };
 
   const allBlogs = () => {
-    // const usersBlog = blogs.filter(
-    //   blog => blog.user.username === user.username
-    // );
     const sortedBlog = blogs.sort((blog1, blog2) => {
       if (blog1.likes === blog2.likes) {
         return 0;
@@ -153,7 +135,7 @@ function App() {
 
   return (
     <div>
-      <Notification notification={notification} />
+      <Notification />
 
       {user === null ? (
         <div>
@@ -172,12 +154,7 @@ function App() {
           </p>
 
           <Toggleable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm
-              handleCreateBlog={handleCreateBlog}
-              title={title}
-              author={author}
-              url={url}
-            />
+            <BlogForm handleCreateBlog={handleCreateBlog} />
           </Toggleable>
 
           {allBlogs()}
@@ -187,4 +164,5 @@ function App() {
   );
 }
 
-export default App;
+export default connect(null, { setNotification })(App);
+// export default App;

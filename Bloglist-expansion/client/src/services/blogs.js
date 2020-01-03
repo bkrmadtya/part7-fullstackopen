@@ -1,5 +1,5 @@
-import axios from "axios";
-const baseUrl = "http://localhost:3003/api/blogs";
+import axios from 'axios';
+const baseUrl = 'http://localhost:3003/api/blogs';
 
 let token = null;
 
@@ -22,14 +22,14 @@ const createBlog = async newBlog => {
   return response.data;
 };
 
-const updateBlog = async newBlog => {
+const updateBlog = async blogToUpdate => {
   const config = {
     headers: { Authorization: token }
   };
 
   const updatedBlog = await axios.put(
-    baseUrl + "/" + newBlog.id,
-    newBlog,
+    baseUrl + '/' + blogToUpdate.id,
+    blogToUpdate,
     config
   );
   return updatedBlog.data;
@@ -40,7 +40,7 @@ const deleteBlog = async blog => {
     headers: { Authorization: token }
   };
 
-  const deletedBlog = await axios.delete(baseUrl + "/" + blog.id, config);
+  const deletedBlog = await axios.delete(baseUrl + '/' + blog.id, config);
   return deletedBlog.data;
 };
 

@@ -1,4 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { login } from '../reducers/authReducer';
+
 import PropTypes from 'prop-types';
 
 const LoginForm = ({ handleLogin, username, password }) => {
@@ -23,4 +27,4 @@ const LoginForm = ({ handleLogin, username, password }) => {
   );
 };
 
-export default LoginForm;
+export default connect(null, { login })(LoginForm);
