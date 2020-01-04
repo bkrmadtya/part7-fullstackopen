@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { likeBlog, deleteBlog } from '../../reducers/blogReducer';
+import CommentForm from './CommentForm';
 
 const Blog = props => {
   const { blog, likeBlog, deleteBlog, user } = props;
@@ -36,6 +37,8 @@ const Blog = props => {
     return null;
   }
 
+  console.log(blog);
+
   return (
     <div className="blogPost">
       <h2>
@@ -54,6 +57,14 @@ const Blog = props => {
         </div>
         <div>added by {blog.user.username}</div>
         {enableRemoveIfCreator()}
+
+        <CommentForm blog={blog} />
+
+        <ul>
+          {blog.comments.map((comment, i) => (
+            <li key={blog.id + comment + i}>{comment}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );

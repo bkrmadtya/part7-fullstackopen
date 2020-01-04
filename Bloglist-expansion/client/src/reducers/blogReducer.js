@@ -10,9 +10,15 @@ const blogReducer = (state = [], action) => {
     case 'NEW_BLOG':
       return [...state, action.payload];
 
+    case 'COMMENT_ON_BLOG':
+      const commentedBlog = action.payload;
+      console.log(commentedBlog);
+      return state.map(blog =>
+        blog.id === commentedBlog.id ? commentedBlog : blog
+      );
+
     case 'LIKE_BLOG':
       const likedBlog = action.payload;
-      console.log(likedBlog);
       return state.map(blog => (blog.id === likedBlog.id ? likedBlog : blog));
 
     case 'DELETE_BLOG':
@@ -54,6 +60,32 @@ export const createBlog = blog => {
       dispatch(
         setNotification({
           message: 'Error creating blog',
+          type: 'error'
+        })
+      );
+    }
+  };
+};
+
+export const commentOnBlog = blog => {
+  return async dispatch => {
+    try {
+      const commentedBlod = await blogService.commentOnBlog(blog);
+
+      dispatch({
+        type: 'COMMENT_ON_BLOG',
+        payload: commentedBlod
+      });
+
+      dispatch(
+        setNotification({
+          message: `A new comment added on blog ${blog.title}!`
+        })
+      );
+    } catch (e) {
+      dispatch(
+        setNotification({
+          message: 'Error commenting!',
           type: 'error'
         })
       );

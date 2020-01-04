@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  withRouter
+} from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { initializeBlogs } from './reducers/blogReducer';
@@ -13,7 +18,7 @@ import Blog from './components/Blogs/Blog';
 import UserList from './components/Users/UserList';
 import User from './components/Users/User';
 
-function App(props) {
+const App = props => {
   const {
     initializeBlogs,
     initializeUsers,
@@ -78,21 +83,29 @@ function App(props) {
           path="/"
           render={() => (user ? <Blogs /> : <LoginForm />)}
         />
-        <Route exact path="/users" render={() => <UserList />} />
+        <Route
+          exact
+          path="/users"
+          render={() => (user ? <UserList /> : <LoginForm />)}
+        />
         <Route
           exact
           path="/users/:id"
-          render={({ match }) => <User user={getUserById(match.params.id)} />}
+          render={({ match }) =>
+            user ? <User user={getUserById(match.params.id)} /> : <LoginForm />
+          }
         />
         <Route
           exact
           path="/blogs/:id"
-          render={({ match }) => <Blog blog={getBlogById(match.params.id)} />}
+          render={({ match }) =>
+            user ? <Blog blog={getBlogById(match.params.id)} /> : <LoginForm />
+          }
         />
       </Router>
     </div>
   );
-}
+};
 
 const mapStateToProps = state => {
   return {
