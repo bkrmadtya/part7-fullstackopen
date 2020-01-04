@@ -5,7 +5,7 @@ import { useField } from '../hooks/index';
 
 import { createBlog } from '../reducers/blogReducer';
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ loggedInUser, createBlog }) => {
   const [title, titleReset] = useField('text');
   const [author, authorReset] = useField('text');
   const [url, urlReset] = useField('text');
@@ -44,4 +44,10 @@ const BlogForm = ({ createBlog }) => {
   );
 };
 
-export default connect(null, { createBlog })(BlogForm);
+const mapStateToProps = state => {
+  return {
+    loggedInUser: state.user
+  };
+};
+
+export default connect(mapStateToProps, { createBlog })(BlogForm);
