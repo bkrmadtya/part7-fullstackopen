@@ -1,44 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { setNotification } from './reducers/notificationReducer';
+import { initializeBlogs } from './reducers/blogReducer';
+import { logout } from './reducers/authReducer';
 
-import { useField } from './hooks';
-
-import loginService from './services/login';
 import blogService from './services/blogs.js';
 
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
-import Blog from './components/Blog';
 import Toggleable from './components/Toggleable';
+import BlogList from './components/BlogList';
 
-function App({ setNotification }) {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-  const [username, resetUsername] = useField('text');
-  const [password, resetPassword] = useField('password');
+function App(props) {
+  const { setNotification, initializeBlogs, logout, user } = props;
+
+  console.log(user);
 
   const blogFormRef = React.createRef();
 
-  const fetchBlogs = async () => {
-    const blogs = await blogService.getAll();
-    setBlogs(blogs);
-  };
-
   useEffect(() => {
-    fetchBlogs();
-  }, []);
-
-  useEffect(() => {
-    const loggedUserJson = window.localStorage.getItem('loggedBlogappUser');
-    if (loggedUserJson) {
-      const user = JSON.parse(loggedUserJson);
-      setUser(user);
-      blogService.setToken(user.token);
-      setNotification({ message: `${user.name} logged in`, type: 'success' });
-    }
+    initializeBlogs();
   }, []);
 
   const handleCreateBlog = async blog => {
@@ -46,7 +28,6 @@ function App({ setNotification }) {
 
     try {
       const newBlog = await blogService.createBlog(blog);
-      setBlogs([...blogs, newBlog]);
 
       setNotification({
         message: `a new blog ${blog.title} by ${blog.author} added`,
@@ -57,80 +38,60 @@ function App({ setNotification }) {
     }
   };
 
-  const handleBlogUpdate = async blogToUpdate => {
-    try {
-      console.log(blogToUpdate);
-      const updatedBlog = await blogService.updateBlog(blogToUpdate);
+  // const handleBlogUpdate = async blogToUpdate => {
+  //   try {
+  //     console.log(blogToUpdate);
+  //     const updatedBlog = await blogService.updateBlog(blogToUpdate);
 
-      setNotification({
-        message: `${updatedBlog.title} updated`,
-        type: 'success'
-      });
-    } catch (exception) {
-      setNotification({ message: 'Error updating', type: 'error' });
-    }
-  };
+  //     setNotification({
+  //       message: `${updatedBlog.title} updated`,
+  //       type: 'success'
+  //     });
+  //   } catch (exception) {
+  //     setNotification({ message: 'Error updating', type: 'error' });
+  //   }
+  // };
 
-  const handleDeleteBlog = async blog => {
-    try {
-      await blogService.deleteBlog(blog);
-      fetchBlogs();
+  // const handleDeleteBlog = async blog => {
+  //   try {
+  //     await blogService.deleteBlog(blog);
+  //     fetchBlogs();
 
-      setNotification({ message: `${blog.title} deleted`, type: 'success' });
-    } catch (exception) {
-      setNotification({ message: 'Error updating', type: 'error' });
-    }
-  };
+  //     setNotification({ message: `${blog.title} deleted`, type: 'success' });
+  //   } catch (exception) {
+  //     setNotification({ message: 'Error updating', type: 'error' });
+  //   }
+  // };
 
-  const handleLogin = async event => {
-    event.preventDefault();
+  // const handleLogin = async event => {
+  //   event.preventDefault();
 
-    try {
-      const user = await loginService.login({
-        username: username.value,
-        password: password.value
-      });
+  //   try {
+  //     const user = await loginService.login({
+  //       username: username.value,
+  //       password: password.value
+  //     });
 
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
+  //     console.log(user);
 
-      resetUsername('');
-      resetPassword('');
+  //     window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+  //     blogService.setToken(user.token);
+  //     setUser(user);
 
-      setNotification({
-        message: `${user.name} logged in`,
-        type: 'success'
-      });
-    } catch (exception) {
-      setNotification({ message: 'Wrong credentials', type: 'error' });
-    }
-  };
+  //     resetUsername('');
+  //     resetPassword('');
+
+  //     setNotification({
+  //       message: `${user.name} logged in`,
+  //       type: 'success'
+  //     });
+  //   } catch (exception) {
+  //     setNotification({ message: 'Wrong credentials', type: 'error' });
+  //   }
+  // };
 
   const handleLogout = () => {
-    window.localStorage.clear();
-    setUser(null);
-  };
-
-  const allBlogs = () => {
-    const sortedBlog = blogs.sort((blog1, blog2) => {
-      if (blog1.likes === blog2.likes) {
-        return 0;
-      }
-      return blog1.likes < blog2.likes ? 1 : -1;
-    });
-
-    return sortedBlog.map(blog => (
-      <Blog
-        key={blog.id + blog.title}
-        blog={blog}
-        updateBlog={handleBlogUpdate}
-        deleteBlog={handleDeleteBlog}
-        blogCreator={(() =>
-          blog.user.username === user.username &&
-          blog.user.name === user.name)()}
-      />
-    ));
+    logout();
   };
 
   return (
@@ -140,11 +101,7 @@ function App({ setNotification }) {
       {user === null ? (
         <div>
           <h2>Log in to application</h2>
-          <LoginForm
-            handleLogin={handleLogin}
-            username={username}
-            password={password}
-          />
+          <LoginForm />
         </div>
       ) : (
         <div>
@@ -154,15 +111,24 @@ function App({ setNotification }) {
           </p>
 
           <Toggleable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm handleCreateBlog={handleCreateBlog} />
+            <BlogForm />
           </Toggleable>
 
-          {allBlogs()}
+          <BlogList />
         </div>
       )}
     </div>
   );
 }
 
-export default connect(null, { setNotification })(App);
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+};
+
+export default connect(mapStateToProps, {
+  initializeBlogs,
+  logout
+})(App);
 // export default App;

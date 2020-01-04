@@ -14,7 +14,6 @@ const notificationReducer = (state = initialNotification, action) => {
 };
 
 export const setNotification = notification => {
-  console.log('notification');
   return dispatch => {
     dispatch(displayNotification(notification));
 

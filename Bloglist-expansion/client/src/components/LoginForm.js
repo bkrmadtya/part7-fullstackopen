@@ -3,13 +3,18 @@ import { connect } from 'react-redux';
 
 import { login } from '../reducers/authReducer';
 
-import PropTypes from 'prop-types';
+import { useField } from '../hooks';
 
-const LoginForm = ({ handleLogin, username, password }) => {
-  LoginForm.prototype = {
-    handleLogin: PropTypes.func.isRequired,
-    username: PropTypes.object.isRequired,
-    password: PropTypes.object.isRequired
+const LoginForm = ({ login }) => {
+  const [username, resetUsername] = useField('text');
+  const [password, resetPassword] = useField('password');
+
+  const handleLogin = e => {
+    e.preventDefault();
+    login(username.value, password.value);
+
+    resetUsername('');
+    resetPassword('');
   };
 
   return (

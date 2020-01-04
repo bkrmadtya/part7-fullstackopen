@@ -1,5 +1,7 @@
 import blogService from '../services/blogs';
 
+import { setNotification } from './notificationReducer';
+
 const blogReducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT_BLOGS':
@@ -10,6 +12,7 @@ const blogReducer = (state = [], action) => {
 
     case 'LIKE_BLOG':
       const likedBlog = action.payload;
+      console.log(likedBlog);
       return state.map(blog => (blog.id === likedBlog.id ? likedBlog : blog));
 
     case 'DELETE_BLOG':
@@ -40,6 +43,12 @@ export const createBlog = blog => {
       type: 'NEW_BLOG',
       payload: createdBlog
     });
+
+    dispatch(
+      setNotification({
+        message: `A new blog ${blog.title} added!`
+      })
+    );
   };
 };
 
@@ -48,9 +57,15 @@ export const likeBlog = blog => {
     const likedBlog = await blogService.updateBlog(blog);
 
     dispatch({
-      type: 'NEW_BLOG',
+      type: 'LIKE_BLOG',
       payload: likedBlog
     });
+
+    dispatch(
+      setNotification({
+        message: `Blog ${blog.title} liked!`
+      })
+    );
   };
 };
 
@@ -61,6 +76,12 @@ export const deleteBlog = blog => {
       type: 'NEW_BLOG',
       payload: deletedBlog
     });
+
+    dispatch(
+      setNotification({
+        message: `Blog ${blog.title} deleted!`
+      })
+    );
   };
 };
 

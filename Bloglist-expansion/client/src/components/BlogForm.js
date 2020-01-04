@@ -1,18 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import { useField } from '../hooks/index';
 
-const BlogForm = ({ handleCreateBlog }) => {
+import { createBlog } from '../reducers/blogReducer';
+
+const BlogForm = ({ createBlog }) => {
   const [title, titleReset] = useField('text');
   const [author, authorReset] = useField('text');
   const [url, urlReset] = useField('text');
 
   const handleSubmit = event => {
     event.preventDefault();
-    handleCreateBlog({
+
+    createBlog({
       title: title.value,
       author: author.value,
       url: url.value
     });
+
     titleReset();
     authorReset();
     urlReset();
@@ -38,4 +44,4 @@ const BlogForm = ({ handleCreateBlog }) => {
   );
 };
 
-export default BlogForm;
+export default connect(null, { createBlog })(BlogForm);

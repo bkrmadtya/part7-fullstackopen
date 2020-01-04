@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
-const Blog = ({ blog, updateBlog, deleteBlog, blogCreator }) => {
+import { likeBlog, deleteBlog } from '../reducers/blogReducer';
+
+const Blog = props => {
   const [showDetails, setShowDetails] = useState(false);
+  const { blog, likeBlog, deleteBlog, user } = props;
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
@@ -15,18 +19,15 @@ const Blog = ({ blog, updateBlog, deleteBlog, blogCreator }) => {
     marginTop: 5
   };
 
-  const likeBlog = e => {
+  const handleLikeBlog = e => {
     e.stopPropagation();
-    blog.likes++;
 
-    updateBlog(blog);
+    likeBlog(blog);
   };
 
   const enableRemoveIfCreator = () => {
-    let result = null;
-
-    if (blogCreator) {
-      result = (
+    if (blog.user.id === user.id) {
+      return (
         <div>
           <button
             onClick={() => {
@@ -42,7 +43,6 @@ const Blog = ({ blog, updateBlog, deleteBlog, blogCreator }) => {
         </div>
       );
     }
-    return result;
   };
 
   return (
@@ -59,7 +59,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, blogCreator }) => {
           </div>
           <div>
             {blog.likes} likes
-            <button onClick={e => likeBlog(e)}>like</button>
+            <button onClick={e => handleLikeBlog(e)}>like</button>
           </div>
           <div>added by {blog.user.username}</div>
           {enableRemoveIfCreator()}
@@ -69,4 +69,10 @@ const Blog = ({ blog, updateBlog, deleteBlog, blogCreator }) => {
   );
 };
 
-export default Blog;
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+};
+
+export default connect(mapStateToProps, { likeBlog, deleteBlog })(Blog);

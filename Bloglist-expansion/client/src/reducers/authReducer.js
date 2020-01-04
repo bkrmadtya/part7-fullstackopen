@@ -1,18 +1,58 @@
-const initialState = {};
+import loginService from '../services/login';
+import blogService from '../services/blogs';
 
-const authReducer = (state = '', action) => {
+import { setNotification } from './notificationReducer';
+
+const getUser = () => {
+  const loggedUserJson = window.localStorage.getItem('loggedBlogappUser');
+  if (loggedUserJson) {
+    const user = JSON.parse(loggedUserJson);
+    blogService.setToken(user.token);
+
+    return user;
+  } else {
+    return null;
+  }
+};
+
+const authReducer = (state = getUser(), action) => {
   switch (action.type) {
-    case 'LOGIN':
-      return state;
+    case 'LOG_IN':
+      return { ...action.payload };
+    case 'LOG_OUT':
+      return null;
     default:
       return state;
   }
 };
 
-export const login = () => {
-  console.log('LOGIN REDUCER');
+export const login = (username, password) => {
+  return async dispatch => {
+    try {
+      const user = await loginService.login({ username, password });
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+
+      blogService.setToken(user.token);
+
+      dispatch({ type: 'LOG_IN', payload: user });
+
+      dispatch(
+        setNotification({ message: `${user.name} logged in!`, type: 'success' })
+      );
+    } catch (e) {
+      dispatch(
+        setNotification({ message: `Wrong credentials`, type: 'error' })
+      );
+    }
+  };
+};
+
+export const logout = () => {
   return dispatch => {
-    dispatch({ type: 'LOGIN' });
+    console.log('logout action called');
+    window.localStorage.clear();
+
+    dispatch({ type: 'LOG_OUT' });
   };
 };
 
