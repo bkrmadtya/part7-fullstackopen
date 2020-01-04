@@ -18,17 +18,20 @@ const LoginForm = ({ login }) => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username <input placeholder="username" {...username}></input>
-      </div>
-      <div>
-        password <input placeholder="password" {...password}></input>
-      </div>
-      <div>
-        <button type="submit">Login</button>
-      </div>
-    </form>
+    <div>
+      <h2>Log in to application</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+          username <input placeholder="username" {...username}></input>
+        </div>
+        <div>
+          password <input placeholder="password" {...password}></input>
+        </div>
+        <div>
+          <button type="submit">Login</button>
+        </div>
+      </form>
+    </div>
   );
 };
 

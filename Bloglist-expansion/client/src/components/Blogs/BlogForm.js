@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { useField } from '../hooks/index';
+import { useField } from '../../hooks/index';
 
-import { createBlog } from '../reducers/blogReducer';
+import { createBlog } from '../../reducers/blogReducer';
 
-const BlogForm = ({ loggedInUser, createBlog }) => {
+const BlogForm = ({ createBlog }) => {
   const [title, titleReset] = useField('text');
   const [author, authorReset] = useField('text');
   const [url, urlReset] = useField('text');
@@ -44,10 +44,4 @@ const BlogForm = ({ loggedInUser, createBlog }) => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    loggedInUser: state.user
-  };
-};
-
-export default connect(mapStateToProps, { createBlog })(BlogForm);
+export default connect(null, { createBlog })(BlogForm);

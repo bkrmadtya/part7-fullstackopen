@@ -40,8 +40,6 @@ export const createBlog = blog => {
     try {
       const createdBlog = await blogService.createBlog(blog);
 
-      console.log(createdBlog);
-
       dispatch({
         type: 'NEW_BLOG',
         payload: createdBlog

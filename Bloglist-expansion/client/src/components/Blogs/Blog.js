@@ -1,23 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import { likeBlog, deleteBlog } from '../reducers/blogReducer';
+import { likeBlog, deleteBlog } from '../../reducers/blogReducer';
 
 const Blog = props => {
-  const [showDetails, setShowDetails] = useState(false);
   const { blog, likeBlog, deleteBlog, user } = props;
-
-  const toggleDetails = () => {
-    setShowDetails(!showDetails);
-  };
-
-  const blogStyle = {
-    border: '1px solid black',
-    borderRadius: 5,
-    // backgroundColor: '#ccc',
-    padding: 10,
-    marginTop: 5
-  };
 
   const handleLikeBlog = e => {
     e.stopPropagation();
@@ -45,26 +32,29 @@ const Blog = props => {
     }
   };
 
+  if (blog === undefined) {
+    return null;
+  }
+
   return (
-    <div className="blogPost" style={blogStyle} onClick={toggleDetails}>
-      <div>
+    <div className="blogPost">
+      <h2>
         {blog.title} {blog.author}
-      </div>
-      {showDetails && (
+      </h2>
+
+      <div>
         <div>
-          <div>
-            <a href={blog.url} target="_">
-              {blog.url}
-            </a>
-          </div>
-          <div>
-            {blog.likes} likes
-            <button onClick={e => handleLikeBlog(e)}>like</button>
-          </div>
-          <div>added by {blog.user.username}</div>
-          {enableRemoveIfCreator()}
+          <a href={blog.url} target="_">
+            {blog.url}
+          </a>
         </div>
-      )}
+        <div>
+          {blog.likes} likes
+          <button onClick={e => handleLikeBlog(e)}>like</button>
+        </div>
+        <div>added by {blog.user.username}</div>
+        {enableRemoveIfCreator()}
+      </div>
     </div>
   );
 };
