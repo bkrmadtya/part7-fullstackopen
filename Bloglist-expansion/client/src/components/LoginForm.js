@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Button, Form } from 'semantic-ui-react';
 
 import { login } from '../reducers/authReducer';
 
@@ -20,17 +21,30 @@ const LoginForm = ({ login }) => {
   return (
     <div>
       <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username <input placeholder="username" {...username}></input>
-        </div>
-        <div>
-          password <input placeholder="password" {...password}></input>
-        </div>
-        <div>
-          <button type="submit">Login</button>
-        </div>
-      </form>
+
+      <Form size="tiny" onSubmit={handleLogin}>
+        <Form.Field>
+          <label>Username</label>
+          <input
+            id="username"
+            placeholder="username"
+            {...username}
+            autoComplete="on"
+          ></input>
+        </Form.Field>
+        <Form.Field>
+          <label>Password</label>
+          <input
+            id="password"
+            placeholder="password"
+            {...password}
+            autoComplete="on"
+          ></input>
+        </Form.Field>
+        <Button id="login-btn" size="tiny" type="submit" primary>
+          Login
+        </Button>
+      </Form>
     </div>
   );
 };

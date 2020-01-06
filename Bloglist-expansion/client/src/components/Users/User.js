@@ -1,4 +1,5 @@
 import React from 'react';
+import { Segment, List } from 'semantic-ui-react';
 
 const User = ({ user }) => {
   if (user === undefined) {
@@ -6,15 +7,18 @@ const User = ({ user }) => {
   }
 
   return (
-    <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
+    <Segment>
+      <h3>{user.name}</h3>
+      <h3>Added blogs</h3>
+
+      <List as="ol">
         {user.blogs.map(blog => (
-          <li key={blog.id}>{blog.title}</li>
+          <List.Item as="li" key={blog.id}>
+            {blog.title}
+          </List.Item>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Segment>
   );
 };
 

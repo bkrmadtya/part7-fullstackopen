@@ -11,19 +11,23 @@ const blogReducer = (state = [], action) => {
       return [...state, action.payload];
 
     case 'COMMENT_ON_BLOG':
-      const commentedBlog = action.payload;
-      console.log(commentedBlog);
-      return state.map(blog =>
-        blog.id === commentedBlog.id ? commentedBlog : blog
-      );
+      return state.map(blog => {
+        if (blog.id === action.payload.id) {
+          return { ...blog, comments: [...action.payload.comments] };
+        }
+        return blog;
+      });
 
     case 'LIKE_BLOG':
-      const likedBlog = action.payload;
-      return state.map(blog => (blog.id === likedBlog.id ? likedBlog : blog));
+      return state.map(blog => {
+        if (blog.id === action.payload.id) {
+          return { ...blog, likes: action.payload.likes };
+        }
+        return blog;
+      });
 
     case 'DELETE_BLOG':
-      const id = action.payload;
-      return state.filter(blog => blog.id !== id);
+      return state.filter(blog => blog.id !== action.payload.id);
 
     default:
       return state;

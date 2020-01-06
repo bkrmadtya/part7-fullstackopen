@@ -11,14 +11,18 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "semantic-ui-react": "^0.88.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "cypress:open": "cypress open",
+    "start:webpack": "webpack-dev-server --mode=development",
+    "build:webpack": "webpack --mode=production"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -37,8 +41,20 @@
   },
   "proxy": "http://localhost:3003",
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
-    "eslint-plugin-jest": "^22.21.0"
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.4.1",
+    "cypress": "^3.8.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^22.21.0",
+    "style-loader": "^1.1.2",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
   }
 }

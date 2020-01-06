@@ -49,7 +49,6 @@ export const login = (username, password) => {
 
 export const logout = () => {
   return dispatch => {
-    console.log('logout action called');
     window.localStorage.clear();
 
     dispatch({ type: 'LOG_OUT' });

@@ -1,7 +1,8 @@
-import React, { useState, useImperativeHandle } from 'react';
+import React, { useState } from 'react';
+import { Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
-const Toggleable = React.forwardRef((props, ref) => {
+const Toggleable = props => {
   const [formVisible, setFormVisible] = useState(false);
 
   Toggleable.propTypes = {
@@ -12,23 +13,27 @@ const Toggleable = React.forwardRef((props, ref) => {
     setFormVisible(!formVisible);
   };
 
-  useImperativeHandle(ref, () => {
-    return {
-      toggleVisibility
-    };
-  });
+  const style = {
+    margin: '10px 0'
+  };
 
   const visibleElement = () => {
     return (
       <div>
         {formVisible && props.children}
-        <button onClick={toggleVisibility}>
+        <Button
+          id="create_cancel_btn"
+          size="mini"
+          style={style}
+          onClick={toggleVisibility}
+          color={formVisible ? 'red' : 'green'}
+        >
           {formVisible ? 'Cancle' : props.buttonLabel}
-        </button>
+        </Button>
       </div>
     );
   };
   return visibleElement();
-});
+};
 
 export default Toggleable;

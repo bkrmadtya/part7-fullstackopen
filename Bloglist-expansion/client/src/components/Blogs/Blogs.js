@@ -1,30 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Table } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
 import Toggleable from './Toggleable';
 import BlogForm from './BlogForm';
 
 const Blogs = ({ blogs }) => {
-  const style = {
-    border: '1px solid black',
-    borderRadius: 5,
-    // backgroundColor: '#ccc',
-    padding: 10,
-    marginTop: 5
-  };
-
   return (
     <div>
       <Toggleable buttonLabel="create new">
         <BlogForm />
       </Toggleable>
 
-      {blogs.map(blog => (
-        <div key={blog.id} style={style}>
-          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-        </div>
-      ))}
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Blog</Table.HeaderCell>
+            <Table.HeaderCell>Author</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+
+        <Table.Body>
+          {blogs.map(blog => (
+            <Table.Row key={blog.id}>
+              <Table.Cell>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+              </Table.Cell>
+              <Table.Cell>{blog.author}</Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
     </div>
   );
 };
