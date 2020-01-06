@@ -60,7 +60,8 @@ blogsRouter.post('/', async (request, response, next) => {
 });
 
 blogsRouter.post('/:id/comments', async (request, response, next) => {
-  const { blog } = request.body;
+  const blog = request.body;
+  console.log(blog);
 
   try {
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
